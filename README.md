@@ -66,14 +66,18 @@ define the Cluster  IDs
 set admin passwords
 update the Image URL with the image you just created in the image-builder
 run 
-`bash 00_login.sh
+```text
+bash 00_login.sh
 bash 01_create_vms.sh
-bash 02_ssh_prep_vms.shi`
+bash 02_ssh_prep_vms.shi
+```
 type yes 20 times. The script should do the rest.
-`bash 03_create_utilVM.sh`
-The script 03_create_utilVM.sh creates an additonal "util" VM to host the documentation and copies and executes prepRegistry.sh on that host which loads bootc images into local OpenShift registry, to avoid access issues.
+```text
+bash 03_create_utilVM.sh
+```
+The script 03_create_utilVM.sh creates an additonal "util" VM to host the documentation and copies and executes 
+`prepRegistry.sh`
+on that host which loads bootc images into local OpenShift registry, to avoid access issues.
 
-For initial upload or any lab guide change run.
+For initial upload or any lab guide change run:
 `bash 10_UpdateLabGuide`
-
-
