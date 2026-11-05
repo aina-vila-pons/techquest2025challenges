@@ -1,8 +1,28 @@
 . ./env.sh
 
+# changed: use a cluster-specific host-key file for all util SSH and SCP operations
+vssh() {
+   local namespace=$1
+   shift
+   virtctl -n "$namespace" ssh --known-hosts "$SSH_KNOWN_HOSTS" \
+      --local-ssh-opts='-o StrictHostKeyChecking=accept-new' "$@"
+}
+
+vscp() {
+   local namespace=$1
+   shift
+   virtctl -n "$namespace" scp --known-hosts "$SSH_KNOWN_HOSTS" \
+      --local-ssh-opts='-o StrictHostKeyChecking=accept-new' "$@"
+}
+
 for CLUSTERID in $MUTLICLUSTERID
 do 
     echo $CLUSTERID
+    # changed: keep different clusters' VM host keys separate
+    SSH_KNOWN_HOSTS="$HOME/.ssh/kubevirt_known_hosts-$CLUSTERID"
+    mkdir -p "$HOME/.ssh"
+    touch "$SSH_KNOWN_HOSTS"
+    chmod 600 "$SSH_KNOWN_HOSTS"
     PW=ADMINPW_$CLUSTERID  
     PW=${!PW}
     echo $PW
@@ -39,7 +59,10 @@ do
         ' > tmp/virtualmachine-util-${CLUSTERID}.yaml
     oc create -f files/secret.yaml -n default
     echo "Create util VM $CLUSTERID"
-    oc create -f tmp/virtualmachine-util-${CLUSTERID}.yaml -n default
+    # changed: remove util's old host key only after a new VM was created successfully
+    if oc create -f tmp/virtualmachine-util-${CLUSTERID}.yaml -n default; then
+        ssh-keygen -R "vmi.util.default" -f "$SSH_KNOWN_HOSTS" >/dev/null 2>&1 || true
+    fi
 
 #    sleep 30
 
