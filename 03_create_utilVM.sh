@@ -82,7 +82,7 @@ do
         virtctl -n default ssh -i ~/.ssh/id_techquest cloud-user@vmi/util  -c 'sudo subscription-manager repos --enable codeready-builder-for-rhel-$(rpm -E %rhel)-$(uname -m)-rpms && sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm && sudo /usr/bin/crb enable && sudo dnf install -y pandoc'
         virtctl -n default scp -i ~/.ssh/id_techquest ./files/markdown.conf ./files/md2html cloud-user@vmi/util:.
 
-        virtctl -n default ssh -i ~/.ssh/id_techquest cloud-user@vmi/util  -c 'sudo mv /home/cloud-user/md2html /usr/local/bin && sudo chmod 755 /usr/local/bin/md2html && sudo mv /home/cloud-user/markdown.conf /etc/httpd/conf.d/ && sudo setsebool -P httpd_execmem on && sudo mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.disabled"
+        virtctl -n default ssh -i ~/.ssh/id_techquest cloud-user@vmi/util  -c 'sudo mv /home/cloud-user/md2html /usr/local/bin && sudo chmod 755 /usr/local/bin/md2html && sudo mv /home/cloud-user/markdown.conf /etc/httpd/conf.d/ && sudo setsebool -P httpd_execmem on && sudo mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.disabled'
         virtctl -n default ssh -i ~/.ssh/id_techquest cloud-user@vmi/util  -c 'sudo systemctl enable --now httpd.service'
 
         virtctl expose vmi util -n default --name=httpd --port=80 --target-port=80
