@@ -26,7 +26,7 @@ do
 	sed -e 's/default/mtv-user'$i'/' files/networkattachmentdefinition.yaml | oc create -f - -n mtv-user$i
 
 	echo  patch the VM
-        oc patch vm thesource -n mtv-user2 --type=json -p '[
+        oc patch vm thesource -n mtv-user$i --type=json -p '[
           {"op":"add","path":"/spec/template/spec/domain/devices/interfaces","value":[
             {"name":"default","masquerade":{}},
             {"name":"nic-flat","bridge":{}}
